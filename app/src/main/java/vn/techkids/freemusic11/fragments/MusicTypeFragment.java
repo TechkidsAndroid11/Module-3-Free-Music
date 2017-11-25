@@ -4,6 +4,7 @@ package vn.techkids.freemusic11.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -52,10 +53,20 @@ public class MusicTypeFragment extends Fragment {
         ButterKnife.bind(this, view);
         context = getContext();
 
-        musicTypeAdapter = new MusicTypeAdapter(musicTypeModelList);
+        musicTypeAdapter = new MusicTypeAdapter(musicTypeModelList, getContext());
         rvMusicType.setAdapter(musicTypeAdapter);
 
-        rvMusicType.setLayoutManager(new LinearLayoutManager(context));
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(
+                context,
+                2
+        );
+        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+            @Override
+            public int getSpanSize(int position) {
+                return (position % 3 == 0 ? 2 : 1) ;
+            }
+        });
+        rvMusicType.setLayoutManager(gridLayoutManager);
 
         loadData();
 
