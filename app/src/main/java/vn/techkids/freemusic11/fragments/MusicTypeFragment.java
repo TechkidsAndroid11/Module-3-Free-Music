@@ -5,13 +5,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -23,10 +20,9 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import vn.techkids.freemusic11.R;
-import vn.techkids.freemusic11.activities.MainActivity;
 import vn.techkids.freemusic11.adapters.MusicTypeAdapter;
 import vn.techkids.freemusic11.databases.MusicTypeModel;
-import vn.techkids.freemusic11.networks.MusicTypesInterface;
+import vn.techkids.freemusic11.networks.MusicInterface;
 import vn.techkids.freemusic11.networks.MusicTypesResponseJSON;
 import vn.techkids.freemusic11.networks.RetrofitInstance;
 
@@ -75,9 +71,9 @@ public class MusicTypeFragment extends Fragment {
 
     private void loadData() {
 
-        MusicTypesInterface musicTypesInterface =
-                RetrofitInstance.getInstance().create(MusicTypesInterface.class);
-        musicTypesInterface.getMusicTypes().enqueue(new Callback<MusicTypesResponseJSON>() {
+        MusicInterface musicInterface =
+                RetrofitInstance.getInstance().create(MusicInterface.class);
+        musicInterface.getMusicTypes().enqueue(new Callback<MusicTypesResponseJSON>() {
             @Override
             public void onResponse(Call<MusicTypesResponseJSON> call, Response<MusicTypesResponseJSON> response) {
                 List<MusicTypesResponseJSON.SubObjectJSON> list

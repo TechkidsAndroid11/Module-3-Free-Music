@@ -1,5 +1,7 @@
 package vn.techkids.freemusic11.networks;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
@@ -7,6 +9,7 @@ import java.util.List;
  */
 
 public class MusicTypesResponseJSON {
+    @SerializedName("subgenres")
     public List<SubObjectJSON> subgenres;
 
     public class SubObjectJSON {

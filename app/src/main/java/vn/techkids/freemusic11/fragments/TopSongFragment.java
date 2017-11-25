@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -21,9 +22,15 @@ import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import vn.techkids.freemusic11.R;
 import vn.techkids.freemusic11.databases.MusicTypeModel;
 import vn.techkids.freemusic11.events.OnClickMusicTypeEvent;
+import vn.techkids.freemusic11.networks.MusicInterface;
+import vn.techkids.freemusic11.networks.RetrofitInstance;
+import vn.techkids.freemusic11.networks.TopSongsResponseJSON;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -62,8 +69,26 @@ public class TopSongFragment extends Fragment {
         EventBus.getDefault().register(this);
 
         setupUI(view);
+        loadData();
 
         return view;
+    }
+
+    private void loadData() {
+        MusicInterface musicInterface = RetrofitInstance.getInstance()
+                .create(MusicInterface.class);
+        musicInterface.getTopSongs(musicTypeModel.id).enqueue(new Callback<TopSongsResponseJSON>() {
+            @Override
+            public void onResponse(Call<TopSongsResponseJSON> call, Response<TopSongsResponseJSON> response) {
+                Log.d(TAG, "onResponse: " + response.body().feed.entry.size());
+            }
+
+            @Override
+            public void onFailure(Call<TopSongsResponseJSON> call, Throwable t) {
+                Toast.makeText(getContext(), "No connection!", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, "onFailure: " + t.toString());
+            }
+        });
     }
 
     @Subscribe(sticky = true)
