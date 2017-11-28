@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -16,17 +17,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
+import com.wang.avi.AVLoadingIndicatorView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import jp.wasabeef.recyclerview.animators.FadeInAnimator;
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import vn.techkids.freemusic11.R;
+import vn.techkids.freemusic11.adapters.TopSongAdapter;
 import vn.techkids.freemusic11.databases.MusicTypeModel;
+import vn.techkids.freemusic11.databases.TopSongModel;
 import vn.techkids.freemusic11.events.OnClickMusicTypeEvent;
 import vn.techkids.freemusic11.networks.MusicInterface;
 import vn.techkids.freemusic11.networks.RetrofitInstance;
@@ -52,8 +61,13 @@ public class TopSongFragment extends Fragment {
     RecyclerView rvTopSongs;
     @BindView(R.id.app_bar)
     AppBarLayout appBarLayout;
+    @BindView(R.id.avload)
+    AVLoadingIndicatorView avLoad;
 
     public MusicTypeModel musicTypeModel;
+
+    private TopSongAdapter topSongAdapter;
+    private List<TopSongModel> topSongModels = new ArrayList<>();
 
     public TopSongFragment() {
         // Required empty public constructor
@@ -80,7 +94,20 @@ public class TopSongFragment extends Fragment {
         musicInterface.getTopSongs(musicTypeModel.id).enqueue(new Callback<TopSongsResponseJSON>() {
             @Override
             public void onResponse(Call<TopSongsResponseJSON> call, Response<TopSongsResponseJSON> response) {
-                Log.d(TAG, "onResponse: " + response.body().feed.entry.size());
+                avLoad.hide();
+
+                List<TopSongsResponseJSON.FeedJSON.EntryJSON> entryJSONList = response.body().feed.entry;
+                for (int i = 0; i < entryJSONList.size(); i++) {
+                    TopSongModel topSongModel = new TopSongModel();
+                    topSongModel.singer = entryJSONList.get(i).artist.label;
+                    topSongModel.song = entryJSONList.get(i).name.label;
+                    topSongModel.smallImage = entryJSONList.get(i).image.get(2).label;
+
+                    topSongModels.add(topSongModel);
+                    topSongAdapter.notifyItemChanged(i);
+                }
+
+//                topSongAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -123,6 +150,15 @@ public class TopSongFragment extends Fragment {
                 }
             }
         });
+
+        topSongAdapter = new TopSongAdapter(getContext(), topSongModels);
+        rvTopSongs.setAdapter(topSongAdapter);
+        rvTopSongs.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        rvTopSongs.setItemAnimator(new SlideInLeftAnimator());
+        rvTopSongs.getItemAnimator().setAddDuration(300);
+
+        avLoad.show();
     }
 
 }
