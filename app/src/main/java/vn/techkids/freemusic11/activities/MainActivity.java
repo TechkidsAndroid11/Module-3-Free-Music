@@ -25,7 +25,9 @@ import vn.techkids.freemusic11.R;
 import vn.techkids.freemusic11.adapters.ViewPagerAdapter;
 import vn.techkids.freemusic11.databases.TopSongModel;
 import vn.techkids.freemusic11.events.OnClickTopSongEvent;
+import vn.techkids.freemusic11.fragments.MainPlayerFragment;
 import vn.techkids.freemusic11.utils.MusicHandler;
+import vn.techkids.freemusic11.utils.Utils;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -71,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
         tvSong.setText(topSongModel.song);
 
         MusicHandler.getSearchSong(topSongModel, this);
+        MusicHandler.updateUIRealtime(seekBar, fbPlay, ivSong, null, null);
     }
 
     private void setupUI() {
@@ -112,6 +115,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 MusicHandler.playPause();
+            }
+        });
+
+        rlMini.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Utils.openFragment(getSupportFragmentManager(), R.id.rl_main_player,
+                        new MainPlayerFragment());
             }
         });
     }
