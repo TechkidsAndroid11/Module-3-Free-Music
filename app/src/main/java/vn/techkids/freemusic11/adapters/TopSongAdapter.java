@@ -22,6 +22,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import vn.techkids.freemusic11.R;
 import vn.techkids.freemusic11.databases.TopSongModel;
 import vn.techkids.freemusic11.events.OnClickTopSongEvent;
+import vn.techkids.freemusic11.notification.MusicNotification;
 
 /**
  * Created by qklahpita on 11/25/17.
@@ -81,6 +82,7 @@ public class TopSongAdapter extends RecyclerView.Adapter<TopSongAdapter.TopSongV
                 public void onClick(View view) {
                     EventBus.getDefault().postSticky
                             (new OnClickTopSongEvent(topSongModel));
+
                 }
             });
         }

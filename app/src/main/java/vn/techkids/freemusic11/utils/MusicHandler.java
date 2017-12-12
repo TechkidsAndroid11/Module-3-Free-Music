@@ -20,6 +20,7 @@ import vn.techkids.freemusic11.databases.TopSongModel;
 import vn.techkids.freemusic11.networks.MusicInterface;
 import vn.techkids.freemusic11.networks.RetrofitInstance;
 import vn.techkids.freemusic11.networks.SearchResponseJSON;
+import vn.techkids.freemusic11.notification.MusicNotification;
 
 /**
  * Created by qklahpita on 11/29/17.
@@ -27,7 +28,7 @@ import vn.techkids.freemusic11.networks.SearchResponseJSON;
 
 public class MusicHandler {
     private static final String TAG = "MusicHandler";
-    private static HybridMediaPlayer hybridMediaPlayer;
+    public static HybridMediaPlayer hybridMediaPlayer;
     private static boolean keepUpdating = true;
 
     public static void getSearchSong(final TopSongModel topSongModel, final Context context) {
@@ -43,6 +44,7 @@ public class MusicHandler {
                             topSongModel.largeImage = response.body().data.thumbnail;
 
                             playMusic(context, topSongModel);
+                            MusicNotification.setupNotification(context, topSongModel);
                         } else if (response.code() == 500) {
                             Toast.makeText(context, "Not found!", Toast.LENGTH_SHORT).show();
                         }
@@ -79,6 +81,7 @@ public class MusicHandler {
         } else {
             hybridMediaPlayer.play();
         }
+        MusicNotification.updateNotification();
     }
 
     public static void updateUIRealtime(final SeekBar seekBar,
