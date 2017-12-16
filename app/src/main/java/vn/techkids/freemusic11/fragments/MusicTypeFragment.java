@@ -21,6 +21,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import vn.techkids.freemusic11.R;
 import vn.techkids.freemusic11.adapters.MusicTypeAdapter;
+import vn.techkids.freemusic11.databases.DatabaseHandler;
 import vn.techkids.freemusic11.databases.MusicTypeModel;
 import vn.techkids.freemusic11.networks.MusicInterface;
 import vn.techkids.freemusic11.networks.MusicTypesResponseJSON;
@@ -64,7 +65,14 @@ public class MusicTypeFragment extends Fragment {
         });
         rvMusicType.setLayoutManager(gridLayoutManager);
 
-        loadData();
+        if (DatabaseHandler.getMusicTypes().size() == 0) {
+            loadData();
+        } else {
+            musicTypeModelList.addAll(DatabaseHandler.getMusicTypes());
+//            musicTypeModelList = DatabaseHandler.getMusicTypes();
+            //clear, remove, add, addAll
+            musicTypeAdapter.notifyDataSetChanged();
+        }
 
         return view;
     }
@@ -88,6 +96,7 @@ public class MusicTypeFragment extends Fragment {
                             context.getPackageName()
                     );
                     musicTypeModelList.add(musicTypeModel);
+                    DatabaseHandler.addMusicType(musicTypeModel);
                 }
                 musicTypeAdapter.notifyDataSetChanged();
             }

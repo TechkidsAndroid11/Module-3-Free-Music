@@ -1,6 +1,7 @@
 package vn.techkids.freemusic11.fragments;
 
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -34,9 +35,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import vn.techkids.freemusic11.R;
 import vn.techkids.freemusic11.adapters.TopSongAdapter;
+import vn.techkids.freemusic11.databases.DatabaseHandler;
 import vn.techkids.freemusic11.databases.MusicTypeModel;
 import vn.techkids.freemusic11.databases.TopSongModel;
 import vn.techkids.freemusic11.events.OnClickMusicTypeEvent;
+import vn.techkids.freemusic11.events.OnUpdateRvFav;
 import vn.techkids.freemusic11.networks.MusicInterface;
 import vn.techkids.freemusic11.networks.RetrofitInstance;
 import vn.techkids.freemusic11.networks.TopSongsResponseJSON;
@@ -159,6 +162,27 @@ public class TopSongFragment extends Fragment {
         rvTopSongs.getItemAnimator().setAddDuration(300);
 
         avLoad.show();
+
+        if (musicTypeModel.isFavourite) {
+            ivFav.setColorFilter(Color.RED);
+        } else {
+            ivFav.setColorFilter(Color.WHITE);
+        }
+
+        ivFav.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatabaseHandler.updateFavourite(musicTypeModel);
+
+                if (musicTypeModel.isFavourite) {
+                    ivFav.setColorFilter(Color.RED);
+                } else {
+                    ivFav.setColorFilter(Color.WHITE);
+                }
+
+                EventBus.getDefault().postSticky(new OnUpdateRvFav());
+            }
+        });
     }
 
 }
