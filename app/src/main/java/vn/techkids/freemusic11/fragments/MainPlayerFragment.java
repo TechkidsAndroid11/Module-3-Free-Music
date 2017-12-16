@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -23,6 +24,7 @@ import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 import vn.techkids.freemusic11.R;
 import vn.techkids.freemusic11.databases.TopSongModel;
 import vn.techkids.freemusic11.events.OnClickTopSongEvent;
+import vn.techkids.freemusic11.utils.DownloadHandler;
 import vn.techkids.freemusic11.utils.MusicHandler;
 import vn.techkids.freemusic11.utils.Utils;
 
@@ -53,6 +55,8 @@ public class MainPlayerFragment extends Fragment {
     ImageView ivNext;
     @BindView(R.id.fb_play)
     FloatingActionButton fbPlay;
+
+    TopSongModel topSongModel;
 
     public MainPlayerFragment() {
         // Required empty public constructor
@@ -87,16 +91,42 @@ public class MainPlayerFragment extends Fragment {
                 MusicHandler.playPause();
             }
         });
+
+        ivDownload.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (DownloadHandler.checkIfDownloaded(topSongModel, getContext())){
+                    Toast.makeText(getContext(), "This song has been downloaded!", Toast.LENGTH_SHORT).show();
+                } else {
+                    DownloadHandler.downloadSong(getContext(), topSongModel);
+                    Toast.makeText(getContext(), "Downloading...", Toast.LENGTH_SHORT).show();
+                    ivDownload.setImageAlpha(100);
+                }
+
+            }
+        });
     }
 
     @Subscribe(sticky = true)
     public void onMiniPlayerClicked(OnClickTopSongEvent onClickTopSongEvent) {
-        TopSongModel topSongModel = onClickTopSongEvent.topSongModel;
+        topSongModel = onClickTopSongEvent.topSongModel;
 
         tvSong.setText(topSongModel.song);
         tvSinger.setText(topSongModel.singer);
-        Picasso.with(getContext()).load(topSongModel.largeImage)
-                .transform(new CropCircleTransformation()).into(ivSong);
+
+        if (topSongModel.smallImage != null) {
+            Picasso.with(getContext()).load(topSongModel.smallImage)
+                    .transform(new CropCircleTransformation()).into(ivSong);
+        } else {
+            Picasso.with(getContext()).load(topSongModel.offlineImage)
+                    .transform(new CropCircleTransformation()).into(ivSong);
+        }
+
+        if (DownloadHandler.checkIfDownloaded(topSongModel, getContext())){
+            ivDownload.setImageAlpha(100);
+        } else {
+            ivDownload.setImageAlpha(255);
+        }
 
         MusicHandler.updateUIRealtime(sbMain, fbPlay, ivSong, tvCurrent, tvDuration);
     }

@@ -8,10 +8,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.util.logging.Handler;
-
 import hybridmediaplayer.HybridMediaPlayer;
-import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -44,7 +41,6 @@ public class MusicHandler {
                             topSongModel.largeImage = response.body().data.thumbnail;
 
                             playMusic(context, topSongModel);
-                            MusicNotification.setupNotification(context, topSongModel);
                         } else if (response.code() == 500) {
                             Toast.makeText(context, "Not found!", Toast.LENGTH_SHORT).show();
                         }
@@ -57,8 +53,9 @@ public class MusicHandler {
                 });
     }
 
-    private static void playMusic(Context context, TopSongModel topSongModel) {
+    public static void playMusic(Context context, TopSongModel topSongModel) {
 
+        MusicNotification.setupNotification(context, topSongModel);
         if (hybridMediaPlayer != null) {
             hybridMediaPlayer.pause();
             hybridMediaPlayer.release();
@@ -66,6 +63,8 @@ public class MusicHandler {
 
         hybridMediaPlayer = HybridMediaPlayer.getInstance(context);
         hybridMediaPlayer.setDataSource(topSongModel.url);
+//        hybridMediaPlayer.setDataSource("https://aredir.nixcdn.com/NhacCuaTui952/ChamKheTimEmMotChutThoiCover" +
+//                "-BuiHaMy-5232467.mp3?st=6fAbonumtA6IUeSM1yNL5g&e=1513240883");
         hybridMediaPlayer.prepare();
         hybridMediaPlayer.setOnPreparedListener(new HybridMediaPlayer.OnPreparedListener() {
             @Override
@@ -76,12 +75,14 @@ public class MusicHandler {
     }
 
     public static void playPause() {
-        if (hybridMediaPlayer.isPlaying()) {
-            hybridMediaPlayer.pause();
-        } else {
-            hybridMediaPlayer.play();
+        if (hybridMediaPlayer != null) {
+            if (hybridMediaPlayer.isPlaying()) {
+                hybridMediaPlayer.pause();
+            } else {
+                hybridMediaPlayer.play();
+            }
+            MusicNotification.updateNotification();
         }
-        MusicNotification.updateNotification();
     }
 
     public static void updateUIRealtime(final SeekBar seekBar,

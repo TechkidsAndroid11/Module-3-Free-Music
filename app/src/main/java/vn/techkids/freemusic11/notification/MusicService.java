@@ -26,15 +26,16 @@ public class MusicService extends Service {
         Log.d(TAG, "onStartCommand: ");
         MusicHandler.playPause();
 
-        return super.onStartCommand(intent, flags, startId);
+        return START_NOT_STICKY;
     }
 
-    @Override
-    public void onTaskRemoved(Intent rootIntent) {
-        super.onTaskRemoved(rootIntent);
-        Log.d(TAG, "onTaskRemoved: ");
+//    @Override
+//    public void onTaskRemoved(Intent rootIntent) {
+//        super.onTaskRemoved(rootIntent);
+//        Log.d(TAG, "onTaskRemoved: ");
+//
+//        MusicNotification.builder.setOngoing(false);
+//        MusicNotification.notificationManager.cancelAll();
+//    }
 
-        MusicNotification.builder.setOngoing(false);
-        MusicNotification.notificationManager.cancelAll();
-    }
 }

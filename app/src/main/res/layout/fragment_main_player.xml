@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:padding="16dp"
-            app:srcCompat="@drawable/ic_file_download_black_24dp" />
+            app:srcCompat="@drawable/ic_music_download_black_24dp" />
 
         <LinearLayout
             android:layout_width="match_parent"

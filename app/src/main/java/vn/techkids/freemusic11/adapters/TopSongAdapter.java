@@ -72,8 +72,14 @@ public class TopSongAdapter extends RecyclerView.Adapter<TopSongAdapter.TopSongV
         }
 
         public void setData(final TopSongModel topSongModel) {
-            Picasso.with(context).load(topSongModel.smallImage)
-                    .transform(new CropCircleTransformation()).into(ivSong);
+            if (topSongModel.smallImage != null) {
+                Picasso.with(context).load(topSongModel.smallImage)
+                        .transform(new CropCircleTransformation()).into(ivSong);
+            } else {
+                Picasso.with(context).load(topSongModel.offlineImage)
+                        .transform(new CropCircleTransformation()).into(ivSong);
+            }
+
             tvSong.setText(topSongModel.song);
             tvSinger.setText(topSongModel.singer);
 

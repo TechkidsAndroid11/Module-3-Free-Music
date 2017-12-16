@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import com.squareup.picasso.Picasso;
@@ -20,6 +21,8 @@ import vn.techkids.freemusic11.utils.MusicHandler;
  */
 //TODO: check noti when swipe app
 public class MusicNotification {
+    private static final String TAG = "MusicNotification";
+
     private static RemoteViews remoteViews;
     public static NotificationCompat.Builder builder;
     public static NotificationManager notificationManager;
@@ -38,7 +41,7 @@ public class MusicNotification {
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
         builder = new NotificationCompat.Builder(context);
-        builder.setSmallIcon(R.mipmap.ic_launcher)
+        builder.setSmallIcon(R.drawable.ic_music_note_black_24dp)
                 .setContent(remoteViews)
                 .setContentIntent(pendingIntent)
                 .setOngoing(true);
@@ -46,8 +49,13 @@ public class MusicNotification {
         notificationManager =
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Picasso.with(context).load(topSongModel.smallImage).transform(new CropCircleTransformation())
-                .into(remoteViews, R.id.iv_song, NOTIFICATION_ID, builder.build());
+        if (topSongModel.smallImage != null) {
+            Picasso.with(context).load(topSongModel.smallImage).transform(new CropCircleTransformation())
+                    .into(remoteViews, R.id.iv_song, NOTIFICATION_ID, builder.build());
+        } else {
+            Picasso.with(context).load(topSongModel.offlineImage).transform(new CropCircleTransformation())
+                    .into(remoteViews, R.id.iv_song, NOTIFICATION_ID, builder.build());
+        }
         setOnClickPlayPause(context);
 
         notificationManager.notify(NOTIFICATION_ID, builder.build());

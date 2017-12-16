@@ -19,7 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".notification.MusicService"/>
+        <service android:name=".notification.MusicService"
+            android:stopWithTask="true"/>
     </application>
 
 </manifest>

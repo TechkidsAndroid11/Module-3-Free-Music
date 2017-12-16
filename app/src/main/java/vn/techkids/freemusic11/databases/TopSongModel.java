@@ -10,4 +10,16 @@ public class TopSongModel {
     public String smallImage;
     public String url;
     public String largeImage;
+
+    public int offlineImage;
+
+    public TopSongModel(String song, String singer, String url, int offlineImage) {
+        this.song = song;
+        this.singer = singer;
+        this.url = url;
+        this.offlineImage = offlineImage;
+    }
+
+    public TopSongModel() {
+    }
 }

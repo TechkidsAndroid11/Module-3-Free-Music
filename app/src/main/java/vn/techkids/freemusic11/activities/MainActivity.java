@@ -64,16 +64,21 @@ public class MainActivity extends AppCompatActivity {
     @Subscribe(sticky = true)
     public void onReceivedTopSong(OnClickTopSongEvent onClickTopSongEvent) {
         TopSongModel topSongModel = onClickTopSongEvent.topSongModel;
-        Log.d(TAG, "onReceivedTopSong: " + topSongModel.song);
-
         rlMini.setVisibility(View.VISIBLE);
 
-        Picasso.with(this).load(topSongModel.smallImage).transform(
-                new CropCircleTransformation()).into(ivSong);
+        if (topSongModel.smallImage != null) {
+            Picasso.with(this).load(topSongModel.smallImage).transform(
+                    new CropCircleTransformation()).into(ivSong);
+            MusicHandler.getSearchSong(topSongModel, this);
+        } else {
+            Picasso.with(this).load(topSongModel.offlineImage).transform(
+                    new CropCircleTransformation()).into(ivSong);
+            MusicHandler.playMusic(this, topSongModel);
+        }
+
         tvSinger.setText(topSongModel.singer);
         tvSong.setText(topSongModel.song);
 
-        MusicHandler.getSearchSong(topSongModel, this);
         MusicHandler.updateUIRealtime(seekBar, fbPlay, ivSong, null, null);
 
     }
@@ -136,6 +141,5 @@ public class MainActivity extends AppCompatActivity {
         } else {
             moveTaskToBack(true);
         }
-
     }
 }
